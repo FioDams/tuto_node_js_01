@@ -1,26 +1,26 @@
 import { createServer } from 'http';
-import dotenv from 'dotenv';
 // import livereload from 'livereload';
 import app from './app.js';
+// import dotenv from 'dotenv';
 
-dotenv.config();
+// dotenv.config({ path: '../.env' });
 
-const normalizePort = val => {
-    const port = parseInt(val, 10);
+// const normalizePort = (val: string) => {
+//     const port = parseInt(val, 10);
 
-    if (isNaN(port)) {
-        return val;
-    }
-    if (port >= 0) {
-        return port;
-    }
-    return false;
-};
+//     if (isNaN(port)) {
+//         return val;
+//     }
+//     if (port >= 0) {
+//         return port;
+//     }
+//     return false;
+// };
 
-const port = normalizePort(process.env.PORT ?? '3000');
+const port = 3000; //normalizePort(process.env.PORT!);
 app.set('port', port);
 
-const errorHandler = error => {
+const errorHandler = (error: { syscall: string; code: any; }) => {
     if (error.syscall !== 'listen') {
         throw error;
     }

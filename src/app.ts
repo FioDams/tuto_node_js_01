@@ -1,10 +1,13 @@
 import express from 'express';
 import { connect } from 'mongoose';
 import stuffRoutes from './routes/stuff.js';
+import userRoutes from './routes/user.js';
+import path from 'path';
 
 const app = express();
 
 import dotenv from 'dotenv';
+import cors from './middlewares/cors.js';
 dotenv.config(); // { path: './.env' });
 
 connect(process.env.MONGODB_URI!)
@@ -13,18 +16,15 @@ connect(process.env.MONGODB_URI!)
 
 app.use(express.json());
 
-// Middleware access-control
-app.use((req, res, next) => {
-    console.log(`Request method: ${req.method}`);
+// Middlewares
+app.use(cors);
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+// rend accessible le dossier images
+app.use('/images', express.static(path.join(import.meta.dirname, '../images')));
 
-    next();
-});
-
+// Routes
 app.use('/api/stuff', stuffRoutes);
+app.use('/api/auth', userRoutes);
 
 app.use((req, res, next) => {
     res.status(404);

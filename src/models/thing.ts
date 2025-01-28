@@ -1,6 +1,14 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const thingSchema = new mongoose.Schema({
+// interface IThing {
+//   title: string;
+//   description: string;
+//   imageUrl: string;
+//   userId: string;
+//   price: number;
+// }
+
+const thingSchema = new Schema<thing>({
   title: { type: String, required: true },
   description: { type: String, required: true },
   imageUrl: { type: String, required: true },
@@ -8,4 +16,4 @@ const thingSchema = new mongoose.Schema({
   price: { type: Number, required: true },
 });
 
-export default mongoose.model('Thing', thingSchema);
+export default model<thing>('Thing', thingSchema);

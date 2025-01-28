@@ -1,3 +1,4 @@
+import fs from 'fs';
 import Thing from '../models/thing.js';
 
 export const createThing = (req: any, res: any, next: any) => {
@@ -53,19 +54,27 @@ export const modifyThing = (req: any, res: any, next: any) => {
 }
 
 export const deleteThing = (req: any, res: any, next: any) => {
-  Thing.deleteOne({ _id: req.params.id }).then(
-    () => {
-      res.status(200).json({
-        message: 'Deleted!'
+  Thing.findOne({ _id: req.params.id, userId: req.auth.userId })
+    .then(thing => {
+      if (!thing) {
+        return res.status(404).json({ message: 'not found' });
+      }
+      // if (thing?.userId != req.auth.userId) {
+      //   res.status(401).json({ message: 'Not authorized' });
+      // } else {
+      const filename = thing?.imageUrl.split('/images')[1];
+      fs.unlink(`images/${filename}`, (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ error: 'Failed to delete image' });
+        }
+        Thing.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: 'Deleted!' }))
+          .catch(error => res.status(400).json({ error: error }));
       });
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
+      // }
+    })
+    .catch(error => res.status(404).json({ error }));
 };
 
 export const getAllStuff = (req: any, res: any, next: any) => {
